@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mynodeapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mynodeapp
+  template:
+    metadata:
+      labels:
+        app: mynodeapp
+    spec:
+      containers:
+        - name: mynodeapp
+          image: embarkx/hello-node
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
+            - name: app_message
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: APP_MESSAGE
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mynodeapp
+spec:
+  selector:
+    app: mynodeapp
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 32000
