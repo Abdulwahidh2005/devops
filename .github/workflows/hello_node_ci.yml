@@ -1,6 +1,10 @@
 name: Hello Node.js CI
 on: 
-  push: 
+  push:
+    branches:
+      - main
+    paths:
+      - docker/app1-hello/node/**
 
   workflow_dispatch:
     
